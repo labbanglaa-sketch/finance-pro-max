@@ -1,0 +1,36 @@
+‎name: Build HTML APK
+‎
+‎on:
+‎  push:
+‎    branches: [ main ]
+‎
+‎jobs:
+‎  build:
+‎    runs-on: ubuntu-latest
+‎
+‎    steps:
+‎    - uses: actions/checkout@v4
+‎
+‎    - name: Install Node.js
+‎      uses: actions/setup-node@v4
+‎      with:
+‎        node-version: 18
+‎
+‎    - name: Install Cordova
+‎      run: |
+‎        npm install -g cordova
+‎
+‎    - name: Create Cordova Project
+‎      run: |
+‎        cordova create app com.finance.promax FinanceProMax
+‎        cd app
+‎        cordova platform add android
+‎        rm -rf www/*
+‎        cp -r ../www/* www/
+‎        cordova build android
+‎
+‎    - name: Upload APK
+‎      uses: actions/upload-artifact@v4
+‎      with:
+‎        name: FinanceProMax-APK
+‎        path: app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
